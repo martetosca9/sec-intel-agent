@@ -4,3 +4,7 @@ requests
 beautifulsoup4
 pytest
 ruff
+chromadb
+langchain
+langchain-community
+sentence-transformers
