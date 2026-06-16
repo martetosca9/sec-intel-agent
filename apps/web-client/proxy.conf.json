@@ -1,0 +1,14 @@
+{
+  "/ingest": {
+    "target": "http://localhost:8000",
+    "secure": false
+  },
+  "/search": {
+    "target": "http://localhost:8000",
+    "secure": false
+  },
+  "/analyze": {
+    "target": "http://localhost:8000",
+    "secure": false
+  }
+}
