@@ -55,7 +55,7 @@ async def search_news(search_data: SearchQuery):
             formatted_results.append(SearchResult(
                 title=res.metadata.get("title", "No Title"),
                 source=res.metadata.get("source", "No Source"),
-                summary=res.page_content
+                summary=res.metadata.get("summary", res.page_content[:200] + "...")
             ))
         return formatted_results
     except Exception as e:

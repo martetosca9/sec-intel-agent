@@ -11,9 +11,10 @@ class NewsIngestor:
         self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         
     def ingest(self):
-        print("--- Starting ingestion process ---")
+        print("--- Starting ingestion process (Full Content) ---")
         scraper = SecurityScraper()
-        news_items = scraper.fetch_news()
+        # Now we fetch full content for better RAG analysis
+        news_items = scraper.fetch_news(fetch_full_content=True)
         
         if not news_items:
             print("No news found to ingest.")
@@ -21,12 +22,20 @@ class NewsIngestor:
 
         documents = []
         for item in news_items:
-            # Create a Document object for LangChain
-            content = f"Title: {item['title']}\nSummary: {item['summary']}"
-            metadata = {"source": item['link'], "title": item['title']}
+            # Use full content if available, otherwise fallback to summary
+            full_text = item.get("full_content")
+            if not full_text:
+                full_text = item['summary']
+                
+            content = f"Title: {item['title']}\n\nContent:\n{full_text}"
+            metadata = {
+                "source": item['link'], 
+                "title": item['title'],
+                "summary": item['summary']
+            }
             documents.append(Document(page_content=content, metadata=metadata))
         
-        print(f"Creating vector database at {self.db_path} with {len(documents)} items...")
+        print(f"Updating vector database at {self.db_path} with {len(documents)} items...")
         
         # Create and persist the vector store
         vector_db = Chroma.from_documents(
